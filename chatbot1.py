@@ -85,24 +85,21 @@ answers = list(faq.values())
 vectorizer = TfidfVectorizer(stop_words='english')
 faq_vectors = vectorizer.fit_transform(questions)
 
-def get_best_answer(user_question , threshold= 0.3):
+def get_best_answer(user_question, threshold=0.3):
     user_vector = vectorizer.transform([user_question])
-    similarities = cosine_similarity(user_vector ,faq_vectors)[0]
+    similarities = cosine_similarity(user_vector, faq_vectors)[0]
     
     best_index = similarities.argmax()
     best_score = similarities[best_index]    
     
     if best_score >= threshold:
-        return answers[best_index]
+        return answers[best_index], best_score
 
-    if best_score < threshold:
-        return (
-            "Sorry, I couldn't find an exact answer to that. "
-            "Please message us directly on Instagram, TikTok, or WhatsApp "
-            "Business and our team will help you out!"
-        ), best_score
-
-    return answers[best_index], best_score
+    return (
+        "Sorry, I couldn't find an exact answer to that. "
+        "Please message us directly on Instagram, TikTok, or WhatsApp "
+        "Business and our team will help you out!"
+    ), best_score
 
 
 def main():
@@ -122,9 +119,7 @@ def main():
     
             answer, score = get_best_answer(user_input)
             print(f"Bot: {answer}")
-            # Uncomment below to see the match confidence while testing:
-            # print(f"(match confidence: {score:.2f})")
-            
+            print(f"(Similarity score: {score:.2f})")
             
 if __name__ == "__main__":
     main()
